@@ -1,10 +1,16 @@
 FROM php:8.0-fpm-buster
 
 # Install basic dependencies
-RUN apt-get update && apt-get install -y git nginx unzip mariadb-client libmagickwand-dev
+RUN apt-get update && apt-get install -y \
+  nginx \
+  unzip \
+  mariadb-client \
+  libmagickwand-dev \
+  libldb-dev \
+  libldap2-dev
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 RUN pecl install imagick
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+RUN docker-php-ext-install mysqli pdo pdo_mysql ldap
 RUN docker-php-ext-enable imagick
 
 # Copy code from repo root directory
@@ -13,7 +19,7 @@ WORKDIR /var/www/passwordmanager
 
 
 # Install project dependencies
-RUN composer install --no-scripts --no-dev && composer install --no-dev --optimize-autoloader --classmap-authoritative --ansi
+RUN composer install --no-scripts --no-dev --classmap-authoritative --ansi --optimize-autoloader
 RUN chown -R www-data /var/www/passwordmanager
 
 COPY docker/env .env
