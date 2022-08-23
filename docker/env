@@ -50,16 +50,6 @@ SESSION_ENCRYPT=false
 SENTRY_DSN=
 SENTRY_TRACES_SAMPLE_RATE=0.0
 
-LDAP_LOGGING=true
-LDAP_CONNECTION=default
-LDAP_HOST=auth1.intra.allegro-packets.com
-LDAP_USERNAME="cn=ldap-ro,ou=bots,dc=allegro-packets,dc=com"
-LDAP_PASSWORD=2gfrpqovBD
-LDAP_PORT=636
-LDAP_BASE_DN="dc=allegro-packets,dc=com"
-LDAP_TIMEOUT=5
-LDAP_SSL=true
-LDAP_TLS=true
 
 
 DB_CONNECTION=mysql
