@@ -14,11 +14,9 @@ class AuthCredentials extends ActionAbstract
      */
     public function handle(): Model
     {
-        $this->checkIp();
-        $this->row();
-        #$this->check();
-        $this->login();
+        $this->check();
         $this->auth();
+        $this->login();
         $this->success();
         $this->session();
 
@@ -46,22 +44,9 @@ class AuthCredentials extends ActionAbstract
      */
     protected function check(): void
     {
-        $this->checkPassword();
+        $this->checkIp();
     }
 
-    /**
-     * @return void
-     */
-    protected function checkPassword(): void
-    {
-        if (empty($this->row->password_enabled)) {
-            $this->fail();
-        }
-
-        if (Hash::check($this->data['password'], $this->row->password) === false) {
-            $this->fail();
-        }
-    }
 
     /**
      * @throws \App\Exceptions\AuthenticationException
@@ -88,9 +73,6 @@ class AuthCredentials extends ActionAbstract
      */
     protected function auth(): void
     {
-        $this->row = $this->auth = Auth::user();
-        
-
         $credentials = [
             'mail' => $this->data['email'],
             'password' => $this->data['password'],
@@ -101,9 +83,8 @@ class AuthCredentials extends ActionAbstract
         ];
 
 
-
         if (Auth::attempt($credentials)) {
-            //$this->row = $this->auth = Auth::user();
+           $this->row();
         } else {
             $this->fail();
         }

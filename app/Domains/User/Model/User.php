@@ -2,6 +2,8 @@
 
 namespace App\Domains\User\Model;
 
+use LdapRecord\Laravel\Auth\LdapAuthenticatable;
+use LdapRecord\Laravel\Auth\AuthenticatesWithLdap;
 use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,9 +16,9 @@ use App\Domains\Shared\Model\ModelAbstract;
 use App\Domains\User\Model\Builder\User as Builder;
 use App\Domains\User\Test\Factory\User as TestFactory;
 
-class User extends ModelAbstract implements Authenticatable
+class User extends ModelAbstract implements LdapAuthenticatable, Authenticatable
 {
-    use AuthenticatableTrait, HasFactory;
+    use AuthenticatableTrait, HasFactory, AuthenticatesWithLdap;
 
     /**
      * @var string

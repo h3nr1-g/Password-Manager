@@ -16,6 +16,7 @@ services:
             - ADMIN_USER=admin
             - ADMIN_PASSWORD=admin123
             - ADMIN_MAIL=admin@foobar.com
+            - LDAPTLS_REQCERT=never
     mariadb:
         image: mariadb:10.4
         ports:
