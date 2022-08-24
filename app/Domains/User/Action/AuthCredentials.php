@@ -16,7 +16,7 @@ class AuthCredentials extends ActionAbstract
     {
         $this->checkIp();
         $this->row();
-        $this->check();
+        #$this->check();
         $this->login();
         $this->auth();
         $this->success();
@@ -89,6 +89,25 @@ class AuthCredentials extends ActionAbstract
     protected function auth(): void
     {
         $this->row = $this->auth = Auth::user();
+        
+
+        $credentials = [
+            'mail' => $this->data['email'],
+            'password' => $this->data['password'],
+            'fallback' => [
+                'email' => $this->data['email'],
+                'password' => $this->data['password'],
+            ],
+        ];
+
+
+
+        if (Auth::attempt($credentials)) {
+            //$this->row = $this->auth = Auth::user();
+        } else {
+            $this->fail();
+        }
+
     }
 
     /**
