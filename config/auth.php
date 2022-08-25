@@ -38,7 +38,7 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'ldap',
+            'provider' => (bool)env('LDAP_ENABLED') ? 'ldap': 'users',
         ],
     ],
 
@@ -60,6 +60,10 @@ return [
     */
 
     'providers' => [
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => App\Domains\User\Model\User::class,
+        ],
         'ldap' => [
            'driver' => 'ldap',
            'model' => App\Ldap\LdapUser::class,
@@ -68,8 +72,8 @@ return [
                'model' => App\Domains\User\Model\User::class,
                'sync_passwords' => true,
                'sync_attributes' => [
-                   'name' => 'cn',
-                   'email' => 'mail',
+                   'name' => env('LDAP_NAME_FIELD','cn'),
+                   'email' => env('LDAP_MAIL_FIELD','mail'),
                ],
             ],
         ],
