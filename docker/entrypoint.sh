@@ -27,7 +27,9 @@ LDAP_TLS=${LDAP_TLS:-false}
 LDAP_LOGGING=${LDAP_LOGGING:-false}
 LDAP_NAME_FIELD="${LDAP_NAME_FIELD:-cn}"
 LDAP_MAIL_FIELD="${LDAP_MAIL_FIELD:-mail}"
-
+LDAP_SYNC_LOOP=${LDAP_SYNC_LOOP:-false}
+LDAP_SYNC_INTERVAL=${LDAP_SYNC_INTERVAL:-300}
+LDAP_SYNC_FILTER=${LDAP_SYNC_FILTER}
 
 # admin account variables
 ADMIN_MAIL="${ADMIN_MAIL:-admin@foobar.org}"
@@ -69,10 +71,25 @@ function run_init {
 
 
 function run_webserver {
+    chown -R www-data storage/logs/
+    chown -R www-data public/storage/
     php-fpm -D
     nginx -g 'daemon off;'
 }
 
+
+function ldap_sync_loop {
+    if [ ! -z "$LDAP_SYNC_FILTER" ]; then
+        FILTER_ARG="--filter $LDAP_SYNC_FILTER "
+    fi
+
+    while true
+    do
+        php artisan ldap:import $FILTER_ARG --ansi --no-interaction
+        php artisan teams:sync_by_ou
+        sleep $LDAP_SYNC_INTERVAL
+    done
+}
 
 function update_env {
     echo "Update env file $ENV_FILE"
@@ -114,4 +131,8 @@ if [ "$IS_DATABASE_INITIALIZED" = "false" ]; then
     run_init
 fi
 
-run_webserver
+if [ "$LDAP_ENABLED" = "true" ] && [ "$LDAP_SYNC_LOOP" = "true" ]; then
+  ldap_sync_loop
+else
+  run_webserver
+fi
